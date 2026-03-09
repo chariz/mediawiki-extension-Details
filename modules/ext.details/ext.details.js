@@ -1,13 +1,26 @@
+/**
+ * Updates the state of the collapsible after it has been toggled.
+ *
+ * @param {JQuery<HTMLElement>} $toggle Toggle button to update
+ * @param {JQuery<HTMLDetailsElement>} $details Overall `<details>` element
+ * @param {DetailsOptions} options Collapsible options
+ */
 function handleToggled( $toggle, $details, options ) {
 	const open = $details[ 0 ].open;
 	$details.toggleClass( 'mw-collapsed', !open );
 	$toggle
-		.attr( 'aria-expanded', open )
+		.attr( 'aria-expanded', String( open ) )
 		.toggleClass( 'mw-collapsible-toggle-collapsed', !open )
 		.find( '.mw-collapsible-text' )
 		.text( open ? options.toggleText.collapseText : options.toggleText.expandText );
 }
 
+/**
+ * Creates a toggle button for the collapsible.
+ *
+ * @param {DetailsOptions} options Collapsible options
+ * @return {JQuery<HTMLElement>}
+ */
 function makeToggle( options ) {
 	return $( '<span class="mw-collapsible-toggle mw-collapsible-toggle-default" role="presentation" aria-hidden="true">' )
 		.addClass( 'mw-collapsible-toggle' )
@@ -15,6 +28,11 @@ function makeToggle( options ) {
 			.text( options.toggleText.collapseText ) );
 }
 
+/**
+ * Enhances a `<details>` element with collapsible functionality.
+ *
+ * @param {HTMLDetailsElement} el The `<details>` to enhance.
+ */
 function makeCollapsible( el ) {
 	const $details = $( el );
 
@@ -23,12 +41,12 @@ function makeCollapsible( el ) {
 		return;
 	}
 
-	const options = {
+	const options = /** @type {DetailsOptions} */ ( {
 		toggleText: {
 			expandText: $details.attr( 'data-expandtext' ) || mw.msg( 'collapsible-expand' ),
 			collapseText: $details.attr( 'data-collapsetext' ) || mw.msg( 'collapsible-collapse' )
 		}
-	};
+	} );
 
 	let $summary = $details.find( '> summary:eq(0)' );
 	if ( $summary.length === 0 ) {
@@ -94,6 +112,9 @@ function makeCollapsible( el ) {
 		.fire( el );
 }
 
+/**
+ * Expands a collapsed `<details>` element containing the hash fragment in browsers that don’t do this automatically.
+ */
 function handleHashChange() {
 	const fragment = mw.util.getTargetFromFragment();
 	if ( !fragment ) {
@@ -129,7 +150,7 @@ mw.hook( 'wikipage.content' )
 
 		// Set up details elements
 		$( '.details--root:not(.mw-made-collapsible)' )
-			.each( ( _, el ) => makeCollapsible( el ) );
+			.each( ( _, el ) => makeCollapsible( /** @type {HTMLDetailsElement} */ ( el ) ) );
 
 		// Handle hashchange if browser doesn’t support hidden-until-found
 		if ( !( 'onbeforematch' in document.body ) ) {
