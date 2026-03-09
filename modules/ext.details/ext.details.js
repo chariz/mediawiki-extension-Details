@@ -22,9 +22,14 @@ function handleToggled( $toggle, $details, options ) {
  * @return {JQuery<HTMLElement>}
  */
 function makeToggle( options ) {
-	return $( '<span class="mw-collapsible-toggle mw-collapsible-toggle-default" role="presentation" aria-hidden="true">' )
-		.addClass( 'mw-collapsible-toggle' )
-		.append( $( '<span class="mw-collapsible-text">' )
+	return $( '<span>' )
+		.addClass( [ 'mw-collapsible-toggle', 'mw-collapsible-toggle-default' ] )
+		.attr( {
+			role: 'presentation',
+			'aria-hidden': 'true'
+		} )
+		.append( $( '<span>' )
+			.addClass( 'mw-collapsible-text' )
 			.text( options.toggleText.collapseText ) );
 }
 
@@ -48,7 +53,9 @@ function makeCollapsible( el ) {
 		}
 	} );
 
-	let $summary = $details.find( '> summary:eq(0)' );
+	let $summary = $details
+		.find( '> summary' )
+		.first();
 	if ( $summary.length === 0 ) {
 		// Make our own
 		$summary = $( '<summary>' )
@@ -74,26 +81,27 @@ function makeCollapsible( el ) {
 		.addClass( 'mw-collapsible mw-made-collapsible' );
 
 	// If the user added non-semantic class="mw-collapsed", close it for them
+	// eslint-disable-next-line no-jquery/no-class-state
 	if ( $details.hasClass( 'mw-collapsed' ) && el.open ) {
 		el.open = false;
 	}
 
 	// Find where we need to put the toggle link
 	let $toggle = $summary
-		.find( '> .mw-collapsible-toggle, .mw-collapsible-toggle-placeholder' )
+		.find( '> .mw-collapsible-toggle' )
+		.first();
+	const $placeholder = $summary
+		.find( '> .mw-collapsible-toggle-placeholder' )
 		.first();
 
-	if ( $toggle.length === 0 ) {
+	if ( $placeholder.length > 0 ) {
+		// Replace placeholder with a real toggle
+		$toggle = makeToggle( options );
+		$placeholder.replaceWith( $toggle );
+	} else if ( $toggle.length === 0 ) {
 		// Make our own
 		$toggle = makeToggle( options )
 			.prependTo( $summary );
-	}
-
-	// Replace placeholder with a real toggle
-	if ( $toggle.hasClass( 'mw-collapsible-toggle-placeholder' ) ) {
-		const newToggle = makeToggle( options );
-		$toggle.replaceWith( newToggle );
-		$toggle = newToggle;
 	}
 
 	// Set up toggle state
@@ -143,12 +151,13 @@ mw.hook( 'wikipage.content' )
 		// Make sure the browser supports <details> toggle event, if not, we’ll gracefully degrade
 		const test = document.createElement( 'details' );
 		if ( !( 'ontoggle' in test ) ) {
-			$( 'html' )
+			$( document.documentElement )
 				.addClass( 'details--not-available' );
 			return;
 		}
 
 		// Set up details elements
+		// eslint-disable-next-line no-jquery/no-global-selector
 		$( '.details--root:not(.mw-made-collapsible)' )
 			.each( ( _, el ) => makeCollapsible( /** @type {HTMLDetailsElement} */ ( el ) ) );
 
