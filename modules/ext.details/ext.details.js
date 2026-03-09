@@ -72,7 +72,7 @@ function makeCollapsible( el ) {
 	}
 
 	// Replace placeholder with a real toggle
-	if ( toggle.hasClass( '.mw-collapsible-toggle-placeholder' ) ) {
+	if ( toggle.hasClass( 'mw-collapsible-toggle-placeholder' ) ) {
 		const newToggle = makeToggle( options );
 		toggle.replaceWith( newToggle );
 		toggle = newToggle;
