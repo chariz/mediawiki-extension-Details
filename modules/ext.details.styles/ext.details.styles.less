@@ -5,7 +5,6 @@
 @color-base: #202122;
 @font-weight-semi-bold: 600;
 @font-weight-normal: 400;
-
 @import 'mediawiki.skin.variables.less';
 
 // Styles a details block to be visually distinct from its surroundings
@@ -42,11 +41,11 @@
 }
 
 .details--root {
-	html.client-js:not( .details--not-available ) &:not( .mw-made-collapsible ),
+	:where( html.client-js:not( .details--not-available ) ) &:not( .mw-made-collapsible ),
 	&.mw-made-collapsible {
 		// Remove disclosure arrow when our own toggle button is in place, or if we’re anticipating it
 		// to be loaded shortly. If the browser doesn’t support HTMLDetailsElement.toggle(), we’ll
-		// add .details--not-available to html, revealing the brower’s disclosure arrow again (if any).
+		// add .details--not-available to html, revealing the browser’s disclosure arrow again (if any).
 		> summary:first-of-type {
 			// Chrome, Firefox
 			list-style: none;
