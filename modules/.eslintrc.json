@@ -1,6 +1,7 @@
 {
 	"extends": [
-		"wikimedia/client-es6",
+		"wikimedia/client",
+		"wikimedia/jquery",
 		"wikimedia/mediawiki"
 	],
 	"env": {
