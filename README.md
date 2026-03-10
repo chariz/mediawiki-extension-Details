@@ -65,6 +65,15 @@ All browsers as of 2017 are fully supported. Specifically, the [`HTMLDetailsElem
 - Firefox 49+
 - Safari 10.1+ (iOS 10.3+)
 
+#### Auto-expanding
+A more recent web platform addition is [“hidden until found”](https://html.spec.whatwg.org/multipage/interaction.html#interaction-with-details-and-hidden=until-found). This allows an element to be hidden, but still visible to features such find in page and anchor (hash) navigation. The browser reveals the element if relevant content is found in it. This is a desirable feature for hidden sections of an article.
+
+- [Chrome 97+](https://chromestatus.com/feature/5032469667512320) (2021)
+- [Firefox 139+](https://bugzilla.mozilla.org/show_bug.cgi?id=1724299) (2025)
+- [Safari 26.2+](https://developer.apple.com/documentation/safari-release-notes/safari-26_2-release-notes#HTML) (2025)
+
+As of version 1.1, the extension polyfills support for “hidden until found” for hash anchors. Polyfilling support for find in page and text highlights is unlikely to be possible.
+
 ### Partially supported
 
 These browsers do not support the toggle event, but will [gracefully degrade](https://en.wikipedia.org/wiki/Fault_tolerance) to using the browser’s built-in toggling functionality. Clicking anywhere within the `<summary>` row will toggle the contents.
