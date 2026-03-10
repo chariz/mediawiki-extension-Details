@@ -7,11 +7,8 @@ namespace MediaWiki\Extension\Details;
 use MediaWiki\MediaWikiServices;
 use PPFrame;
 use Parser;
-/* TODO: Switch to MediaWiki\\Parser\\Sanitizer when Sanitizer fallback is fully dropped */ 
-use Sanitizer;
 
 class Summary {
-
 	/* @var bool */
 	private static $compatibilityMode = true;
 
@@ -28,12 +25,13 @@ class Summary {
 			$parser->getOutput()->addModules( [ 'ext.details' ] );
 		}
 
-		// Render content, stripping <p> if it’s the outermost tag
+		// Render content, stripping <p> if it's the outermost tag
 		$body = trim( $parser->recursiveTagParse( $input, $frame ) );
 		$body = Parser::stripOuterParagraph( $body );
 
 		// Sanitize to attributes that would be valid on a <div>
-		$attrs = Sanitizer::safeEncodeTagAttributes( Sanitizer::validateTagAttributes( $args, 'div' ) );
+		$sanitizer = class_exists( 'MediaWiki\Parser\Sanitizer' ) ? 'MediaWiki\Parser\Sanitizer' : 'Sanitizer';
+		$attrs = $sanitizer::safeEncodeTagAttributes( $sanitizer::validateTagAttributes( $args, 'div' ) );
 
 		return '<summary ' . $attrs . '>' .
 			$body .

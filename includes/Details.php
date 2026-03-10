@@ -7,8 +7,6 @@ namespace MediaWiki\Extension\Details;
 use MediaWiki\MediaWikiServices;
 use PPFrame;
 use Parser;
-/* TODO: Switch to MediaWiki\\Parser\\Sanitizer when Sanitizer fallback is fully dropped */ 
-use Sanitizer;
 
 class Details {
 	private const HEAD_PARTS = [ 'head', 'top' ];
@@ -34,6 +32,8 @@ class Details {
 			return '';
 		}
 
+		$sanitizer = class_exists( 'MediaWiki\Parser\Sanitizer' ) ? 'MediaWiki\Parser\Sanitizer' : 'Sanitizer';
+
 		// Add tracking category
 		$parser->addTrackingCategory( 'details-category' );
 
@@ -42,13 +42,13 @@ class Details {
 		if ( !in_array( $part, Details::FOOT_PARTS ) ) {
 			// Add our attributes
 			if ( self::$compatibilityMode === true ) {
-				$args = Sanitizer::mergeAttributes( [
+				$args = $sanitizer::mergeAttributes( [
 					'class' => 'details--root'
 				], $args);
 			}
 
 			// Sanitize to attributes that would be valid on a <div>
-			$attrs = Sanitizer::safeEncodeTagAttributes( Sanitizer::validateTagAttributes( $args, 'div' ) );
+			$attrs = $sanitizer::safeEncodeTagAttributes( $sanitizer::validateTagAttributes( $args, 'div' ) );
 
 			// Add open attribute manually if set, because the sanitizer will have stripped it out.
 			// We also support some falsy values, to help templates that use the open attribute.
